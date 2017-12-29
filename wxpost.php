@@ -15,9 +15,8 @@ if(function_exists("date_default_timezone_set"))
 	date_default_timezone_set("Asia/Shanghai");
 }
 
-
-$pay_type = $_REQUEST['pay_type'];
 //获取第三方的资料
+$pay_type = $_REQUEST['pay_type'];
 $params = array(':pay_type'=>$_REQUEST['pay_type']);
 $sql = "select t.pay_name,t.mer_id,t.mer_key,t.mer_account,t.pay_type,t.pay_domain,t1.wy_returnUrl,t1.wx_returnUrl,t1.zfb_returnUrl,t1.wy_synUrl,t1.wx_synUrl,t1.zfb_synUrl from pay_set t left join pay_list t1 on t1.pay_name=t.pay_name where t.pay_type=:pay_type";
 $stmt = $mydata1_db->prepare($sql);
@@ -35,22 +34,26 @@ if($pay_mid == "" || $pay_mkey == "")
 }
 
 
-//提交地址
-$form_url = 'https://pay.swiftpass.cn/pay/gateway'; //正式
+
+$form_url = 'https://pay.swiftpass.cn/pay/gateway';  //提交地址
 $service = 'pay.weixin.native';
-//商户号
-$mch_id = $pay_mid;
-//商户订单编号
-$out_trade_no = date("YmdHis").substr(microtime(),2,5).rand(1,9);//流水号
+
+$mch_id = $pay_mid; 	//商戶號
+
+$out_trade_no = date("YmdHis").substr(microtime(),2,5).rand(1,9);  //隨機生成商户訂單編號
+
 $body = '測試用支付';
-//订单生成的机器 IP
-$mch_create_ip = getClientIp();
-//订单金额(保留2位小数)
-$total_fee = $_GET['MOAmount'];
-//支付结果成功返回的商户URL
-$notify_url = $merchant_url;
+
+$mch_create_ip = getClientIp();  //取到電腦 IP function在 moneyfunc.php 裡
+
+$total_fee = $_GET['MOAmount']; //訂單支付金額
+
+$notify_url = $merchant_url;  //異步回傳地址
+
 $nonce_str = 'test123';
-$key = $pay_mkey;
+
+$key = $pay_mkey;  //商戶金鑰
+
 $signText ='body='.$body.'&mch_create_ip='.$mch_create_ip.'&mch_id='.$mch_id.'&nonce_str='.$nonce_str.'&notify_url='.$notify_url.'&out_trade_no='.$out_trade_no.'&service='.$service.'&total_fee='.$total_fee.'&key='.$key;
 $sign = strtoupper(md5($signText));
 $data = '<xml><body><![CDATA['.$body.']]></body>\n<mch_create_ip><![CDATA['.$mch_create_ip.']]></mch_create_ip>\n<mch_id><![CDATA['.$mch_id.']]></mch_id>\n<nonce_str><![CDATA['.$nonce_str.']]></nonce_str>\n<notify_url><![CDATA['.$notify_url.']]></notify_url>\n<out_trade_no><![CDATA['.$out_trade_no.']]></out_trade_no>\n<service><![CDATA['.$service.']]></service>\n<sign><![CDATA['.$sign.']]></sign>\n<total_fee><![CDATA['.$total_fee.']]></total_fee>\n</xml>';
@@ -71,6 +74,7 @@ else if ($result_insert == -2)
 	exit;
 }
 
+//使用cURL method
 $ch = curl_init();
 curl_setopt($ch, CURLOPT_URL, $form_url);
 curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
@@ -94,10 +98,9 @@ $array = json_decode(json_encode($xml), 1);
      <meta http-equiv="content-Type" content="text/html; charset=utf-8" />
    </head>
    <body>
-     <form action="./qrcode.php"; method="get" id="frm1" target="_blank" >
+     <form action="./qrcode.php"; method="get" id="frm1" >  
          <p>正在为您跳转中，请稍候......</p>
          <input type="hidden" name="code" id="code_url" value="<?php echo $array["code_url"]; ?>"/>
-
      </form>
      <script language="javascript">
        document.getElementById("frm1").submit();
