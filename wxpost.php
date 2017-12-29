@@ -15,7 +15,7 @@ if(function_exists("date_default_timezone_set"))
 	date_default_timezone_set("Asia/Shanghai");
 }
 
-//获取第三方的资料
+//獲取第三方的资料
 $pay_type = $_REQUEST['pay_type'];
 $params = array(':pay_type'=>$_REQUEST['pay_type']);
 $sql = "select t.pay_name,t.mer_id,t.mer_key,t.mer_account,t.pay_type,t.pay_domain,t1.wy_returnUrl,t1.wx_returnUrl,t1.zfb_returnUrl,t1.wy_synUrl,t1.wx_synUrl,t1.zfb_synUrl from pay_set t left join pay_list t1 on t1.pay_name=t.pay_name where t.pay_type=:pay_type";
@@ -62,6 +62,7 @@ $data = '<xml><body><![CDATA['.$body.']]></body>\n<mch_create_ip><![CDATA['.$mch
 $bankname = $pay_type."->微信在线充值";
 $payType = $pay_type."_wx";
 
+//確認訂單有無重複， function在 moneyfunc.php 裡
 $result_insert = insert_online_order($_REQUEST['S_Name'] , $out_trade_no , $total_fee,$bankname,$payType,$top_uid);
 if ($result_insert == -1)
 {
