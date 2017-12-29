@@ -91,7 +91,6 @@ $xml = (array)simplexml_load_string($res, 'SimpleXMLElement', LIBXML_NOCDATA) or
 $array = json_decode(json_encode($xml), 1);
 
 
-
  ?>
  <html>
    <head>
@@ -99,7 +98,7 @@ $array = json_decode(json_encode($xml), 1);
      <meta http-equiv="content-Type" content="text/html; charset=utf-8" />
    </head>
    <body>
-     <form action="./qrcode.php"; method="get" id="frm1" >  
+     <form action="./qrcode.php"; method="get" id="frm1" target="_self">
          <p>正在为您跳转中，请稍候......</p>
          <input type="hidden" name="code" id="code_url" value="<?php echo $array["code_url"]; ?>"/>
      </form>
